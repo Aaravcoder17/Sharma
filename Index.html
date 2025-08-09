@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sharma Gifts ® — Originality Check</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Cursive logo font + system fallbacks -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#0f172a; --bg2:#0b1220; --card:#0b1020;
+    --accent1:#8b5cf6; --accent2:#06b6d4;
+    --glass: rgba(255,255,255,0.04);
+    --muted: #94a3b8; --success:#10b981; --warn:#f59e0b; --danger:#ef4444;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(139,92,246,0.14), transparent 6%),
+                radial-gradient(1000px 500px at 90% 90%, rgba(6,182,212,0.08), transparent 6%),
+                linear-gradient(180deg,var(--bg1),var(--bg2));
+    color:#e6eef8;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:18px;
+    display:flex; justify-content:center;
+  }
+
+  .wrap {
+    width:100%; max-width:980px; border-radius:16px; overflow:hidden;
+    box-shadow: 0 20px 50px rgba(2,6,23,0.6);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  /* Top bar */
+  .topbar {
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:18px 22px; backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+  }
+  .brand {
+    text-align:center; flex:1;
+  }
+  .brand h1 {
+    margin:0; font-family: 'Great Vibes', cursive; font-size:34px; letter-spacing:0.6px;
+    color: white; text-shadow: 0 4px 18px rgba(0,0,0,0.6);
+  }
+  .brand small { display:block; font-family:Inter; font-size:12px; color:var(--muted); margin-top:2px; }
+
+  .leftControls { display:flex; gap:10px; align-items:center; min-width:160px; }
+  .logoutBtn { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted);
+    padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:600; }
+  .who { font-size:13px; color:var(--muted); text-align:right; }
+
+  /* main content */
+  .grid { display:grid; grid-template-columns: 1fr 420px; gap:22px; padding:22px; }
+  @media (max-width:920px) { .grid { grid-template-columns: 1fr; } .brand h1 { font-size:30px } }
+
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px; padding:16px; border:1px solid rgba(255,255,255,0.02);
+  }
+
+  /* left: verify area */
+  .verifyCard h2 { margin:0 0 8px 0; font-size:20px; color:#fff }
+  label { display:block; font-size:13px; color:var(--muted); margin-top:12px; }
+  input[type="text"], input[type="password"], input[type="email"], input[type="tel"]{
+    width:100%; padding:12px 14px; margin-top:6px; border-radius:10px; border:1px solid rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.02); color: #e6eef8; font-size:15px; outline:none;
+  }
+  input::placeholder{ color: rgba(230,238,248,0.4) }
+  .btn {
+    display:inline-block; padding:12px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700;
+    background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#051124; margin-top:12px; width:100%;
+    box-shadow: 0 8px 22px rgba(11,12,27,0.6);
+  }
+  .btn.alt { background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); width:auto; padding:8px 12px }
+
+  .muted { color:var(--muted); font-size:13px }
+  .result { margin-top:14px; padding:12px; border-radius:10px; font-weight:700; text-align:center }
+  .result.success { color:var(--success); background: rgba(16,185,129,0.06); }
+  .result.warn { color:var(--warn); background: rgba(245,158,11,0.06); }
+  .result.error { color:var(--danger); background: rgba(239,68,68,0.06); }
+
+  /* right: quick info / admin link */
+  .panel h3{ margin:0 0 8px 0; }
+  .adminLink { display:block; margin-top:10px; padding:10px 12px; border-radius:8px; text-align:center;
+    background:rgba(255,255,255,0.02); color:var(--muted); border:1px dashed rgba(255,255,255,0.03); cursor:pointer; }
+  .small { font-size:13px; color:var(--muted) }
+
+  /* Admin section (below main grid) */
+  #adminSection { padding:22px; border-top:1px solid rgba(255,255,255,0.02); display:none; }
+  #adminSection.active { display:block; }
+  .adminHeader { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  table { width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; color:#e6eef8; }
+  th, td { padding:10px 8px; border-bottom:1px solid rgba(255,255,255,0.02); text-align:left; }
+  .chip { padding:6px 8px; border-radius:8px; background:rgba(255,255,255,0.02); color:var(--muted); font-weight:700; }
+  .actionBtn { padding:6px 8px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--muted); cursor:pointer; margin-right:6px }
+  .dangerBtn { border-color: rgba(239,68,68,0.25); color:var(--danger) }
+  .okBtn { border-color: rgba(16,185,129,0.12); color:var(--success) }
+
+  .footerNote { padding:18px; text-align:center; color:var(--muted); font-size:13px }
+</style>
+</head>
+<body>
+<div class="wrap" role="application">
+  <div class="topbar">
+    <div class="leftControls">
+      <button id="logoutBtn" class="logoutBtn" title="Logout" style="display:none">Log out</button>
+    </div>
+
+    <div class="brand" aria-hidden="false">
+      <h1>Sharma Gifts ®</h1>
+      <small>Authenticity — Verified</small>
+    </div>
+
+    <div style="min-width:160px; text-align:right">
+      <div id="who" class="who muted">Not signed in</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- VERIFY AREA -->
+    <div class="card verifyCard">
+      <h2>Product Originality Check</h2>
+      <div class="muted">Please sign in to verify a candle product. Session persists on this device.</div>
+
+      <label>Email</label>
+      <input id="email" type="email" placeholder="you@example.com" autocomplete="email" />
+
+      <label>Password</label>
+      <input id="password" type="password" placeholder="Your account password" />
+
+      <button id="emailSignInBtn" class="btn">Sign in with Email</button>
+
+      <div class="small-row" style="margin-top:10px">
+        <button id="googleSignInBtn" class="btn alt">Sign in with Google</button>
+        <button id="phoneSignInBtn" class="btn alt">Sign in with Phone (OTP)</button>
+      </div>
+
+      <!-- phone area -->
+      <div id="phoneArea" style="display:none; margin-top:12px">
+        <label>Phone number</label>
+        <input id="phoneInput" type="tel" placeholder="+91XXXXXXXXXX" />
+        <div id="recaptcha-container"></div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button id="sendOtpBtn" class="btn">Send OTP</button>
+          <button id="cancelPhoneBtn" class="btn alt">Cancel</button>
+        </div>
+        <label style="margin-top:10px">Enter OTP</label>
+        <input id="otpInput" type="text" placeholder="123456" />
+        <button id="verifyOtpBtn" class="btn">Verify OTP</button>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <hr style="border:none; border-top:1px solid rgba(255,255,255,0.02)">
+
+      <label style="margin-top:12px">Product ID</label>
+      <input id="prodId" type="text" placeholder="e.g., SPF747" />
+
+      <label>Product Pass</label>
+      <input id="prodPass" type="password" placeholder="e.g., 510AZ" />
+
+      <button id="verifyBtn" class="btn">Check Originality</button>
+
+      <div id="resultBox" style="margin-top:12px"></div>
+      <div id="loginMsg" class="muted" style="margin-top:10px"></div>
+    </div>
+
+    <!-- INFO / ADMIN LINK -->
+    <aside class="card panel">
+      <h3>Quick Info</h3>
+      <p class="small">Sharma Gifts ® — Enter the candle's Product ID and Pass after signing in. If original and unused, the system will mark the code claimed and record verification details.</p>
+
+      <div class="adminLink" id="adminScrollBtn">Go to Admin Panel ↓</div>
+
+      <h3 style="margin-top:14px">Security</h3>
+      <p class="small">Admin access is restricted to a specific account (hardcoded) and shown only when that account signs in.</p>
+
+      <div style="margin-top:12px">
+        <div class="chip">Dark theme</div>
+        <div style="height:8px"></div>
+        <div class="chip">Manual ID entry</div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Admin Section (below, separate scroll area but same page) -->
+  <section id="adminSection">
+    <div class="card">
+      <div class="adminHeader">
+        <div>
+          <h2 style="margin:0">Admin Panel</h2>
+          <div class="muted">Visible only for admin: <strong>aarav.rajnibala95@gmail.com</strong> or <strong>+917696321511</strong></div>
+        </div>
+        <div>
+          <button id="refreshCodesBtn" class="btn alt">Refresh</button>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:12px; margin-top:12px; flex-wrap:wrap">
+        <div style="flex:1; min-width:160px">
+          <label>New Product ID</label>
+          <input id="newId" type="text" placeholder="SPF123" />
+        </div>
+        <div style="flex:1; min-width:160px">
+          <label>New Product Pass</label>
+          <input id="newPass" type="text" placeholder="510AZ" />
+        </div>
+        <div style="width:160px; align-self:end">
+          <button id="addCodeBtn" class="btn">Add Code</button>
+        </div>
+      </div>
+
+      <div id="adminMsg" class="muted" style="margin-top:8px"></div>
+
+      <div style="overflow:auto; max-height:420px; margin-top:12px">
+        <table id="codesTable" role="table" aria-label="Codes table">
+          <thead>
+            <tr><th>ID</th><th>Pass</th><th>Claimed</th><th>By</th><th>At</th><th>Actions</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footerNote">Sharma Gifts ® — Keep admin credentials secure. This client checks admin by matching a hardcoded email/phone inside this file.</div>
+  </section>
+</div>
+
+<!-- Firebase modular SDK -->
+<script type="module">
+  // Imports
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth,
+    setPersistence,
+    browserLocalPersistence,
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+    RecaptchaVerifier,
+    signInWithPhoneNumber,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  import {
+    getDatabase,
+    ref,
+    child,
+    get,
+    update,
+    set,
+    remove
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  // ---------- YOUR FIREBASE CONFIG ----------
+  const firebaseConfig = {
+    apiKey: "AIzaSyBh2k6HJ-_Ch72E5tWTQ0lWtjuJhbAiItA",
+    authDomain: "kamaru-cards.firebaseapp.com",
+    databaseURL: "https://kamaru-cards-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "kamaru-cards",
+    storageBucket: "kamaru-cards.firebasestorage.app",
+    messagingSenderId: "340288762507",
+    appId: "1:340288762507:web:d372231f34ad01392a1a8e",
+    measurementId: "G-LP8WCFG4LX"
+  };
+
+  // Initialize
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  // Force local persistence so login persists on device
+  await setPersistence(auth, browserLocalPersistence).catch(e => console.warn('Persistence:', e.message));
+
+  // Hardcoded admin identity (client-side)
+  const ADMIN_EMAIL = "aarav.rajnibala95@gmail.com";
+  const ADMIN_PHONE = "+917696321511";
+
+  // UI refs
+  const logoutBtn = document.getElementById('logoutBtn');
+  const who = document.getElementById('who');
+  const loginMsg = document.getElementById('loginMsg');
+
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const emailSignInBtn = document.getElementById('emailSignInBtn');
+  const googleSignInBtn = document.getElementById('googleSignInBtn');
+  const phoneSignInBtn = document.getElementById('phoneSignInBtn');
+
+  const phoneArea = document.getElementById('phoneArea');
+  const phoneInput = document.getElementById('phoneInput');
+  const sendOtpBtn = document.getElementById('sendOtpBtn');
+  const otpInput = document.getElementById('otpInput');
+  const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+  const cancelPhoneBtn = document.getElementById('cancelPhoneBtn');
+
+  const prodIdInput = document.getElementById('prodId');
+  const prodPassInput = document.getElementById('prodPass');
+  const verifyBtn = document.getElementById('verifyBtn');
+  const resultBox = document.getElementById('resultBox');
+
+  const adminScrollBtn = document.getElementById('adminScrollBtn');
+  const adminSection = document.getElementById('adminSection');
+  const refreshCodesBtn = document.getElementById('refreshCodesBtn');
+
+  const newId = document.getElementById('newId');
+  const newPass = document.getElementById('newPass');
+  const addCodeBtn = document.getElementById('addCodeBtn');
+  const adminMsg = document.getElementById('adminMsg');
+  const codesTableBody = document.querySelector('#codesTable tbody');
+
+  // Helper: show/hide UI pieces based on auth/admin
+  function showSignedOut() {
+    logoutBtn.style.display = 'none';
+    who.textContent = 'Not signed in';
+    adminSection.classList.remove('active');
+    adminSection.style.display = 'none';
+    document.getElementById('loginMsg').textContent = '';
+  }
+
+  function showSignedIn(user, isAdmin) {
+    logoutBtn.style.display = '';
+    who.textContent = user.displayName || user.email || user.phoneNumber || user.uid;
+    document.getElementById('loginMsg').textContent = '';
+    if (isAdmin) {
+      adminSection.classList.add('active');
+      adminSection.style.display = '';
+      loadAllCodes();
+    } else {
+      adminSection.classList.remove('active');
+      adminSection.style.display = 'none';
+    }
+  }
+
+  // Observe auth state
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      const isAdmin = (user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) || (user.phoneNumber === ADMIN_PHONE);
+      showSignedIn(user, isAdmin);
+    } else {
+      showSignedOut();
+    }
+  });
+
+  // Email sign-in
+  emailSignInBtn.addEventListener('click', async () => {
+    const email = emailInput.value.trim();
+    const pass = passwordInput.value;
+    if (!email || !pass) { loginMsg.textContent = 'Enter email & password'; return; }
+    loginMsg.textContent = 'Signing in...';
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+      loginMsg.textContent = '';
+    } catch (e) {
+      loginMsg.textContent = 'Sign-in failed: ' + e.message;
+    }
+  });
+
+  // Google sign-in
+  googleSignInBtn.addEventListener('click', async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      loginMsg.textContent = 'Google sign-in failed: ' + e.message;
+    }
+  });
+
+  // Phone sign-in toggle
+  phoneSignInBtn.addEventListener('click', () => {
+    phoneArea.style.display = phoneArea.style.display === 'none' ? '' : 'none';
+    loginMsg.textContent = '';
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+        'size': 'invisible',
+        'callback': (token) => { console.log('reCAPTCHA ok'); }
+      }, auth);
+    }
+  });
+  cancelPhoneBtn.addEventListener('click', () => phoneArea.style.display = 'none');
+
+  // Send OTP
+  sendOtpBtn.addEventListener('click', async () => {
+    const phone = phoneInput.value.trim();
+    if (!phone) { loginMsg.textContent = 'Enter phone number with country code'; return; }
+    try {
+      loginMsg.textContent = 'Sending OTP...';
+      const confirmationResult = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
+      window.confirmationResult = confirmationResult;
+      loginMsg.textContent = 'OTP sent. Enter the code.';
+    } catch (e) {
+      console.error(e);
+      loginMsg.textContent = 'Send OTP failed: ' + e.message;
+    }
+  });
+
+  // Verify OTP
+  verifyOtpBtn.addEventListener('click', async () => {
+    const code = otpInput.value.trim();
+    if (!code || !window.confirmationResult) { loginMsg.textContent = 'Enter OTP'; return; }
+    try {
+      await window.confirmationResult.confirm(code);
+      loginMsg.textContent = '';
+      phoneArea.style.display = 'none';
+    } catch (e) {
+      loginMsg.textContent = 'OTP verification failed: ' + e.message;
+    }
+  });
+
+  // Logout
+  logoutBtn.addEventListener('click', async () => {
+    await signOut(auth);
+    location.reload();
+  });
+
+  // Scroll to admin
+  adminScrollBtn.addEventListener('click', () => {
+    adminSection.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // Verify product
+  verifyBtn.addEventListener('click', async () => {
+    const prodId = prodIdInput.value.trim();
+    const prodPass = prodPassInput.value.trim();
+    if (!prodId || !prodPass) {
+      resultBox.innerHTML = '<div class="result error">Enter Product ID & Pass</div>'; return;
+    }
+    resultBox.innerHTML = '<div class="muted">Checking…</div>';
+    try {
+      const snapshot = await get(child(ref(db), `codes/${prodId}`));
+      if (!snapshot.exists()) {
+        resultBox.innerHTML = '<div class="result error">❌ Not Original — code not found</div>'; return;
+      }
+      const data = snapshot.val();
+      if (data.pass !== prodPass) {
+        resultBox.innerHTML = '<div class="result error">❌ Not Original — pass mismatch</div>'; return;
+      }
+      if (data.claimed === true) {
+        const by = data.claimedBy || 'Unknown';
+        const at = data.claimedAt ? new Date(data.claimedAt).toLocaleString() : 'Unknown';
+        resultBox.innerHTML = `<div class="result warn">⚠️ Already Claimed — by ${by} at ${at}</div>`; return;
+      }
+      // mark claimed
+      const user = auth.currentUser;
+      const claimedBy = user ? (user.email || user.phoneNumber || user.uid) : 'anonymous';
+      const claimedAt = Date.now();
+      await update(ref(db, `codes/${prodId}`), { claimed: true, claimedBy, claimedAt });
+      resultBox.innerHTML = `<div class="result success">✅ Original — Claimed by ${claimedBy}</div>`;
+      // if admin is viewing, refresh table
+      const isAdmin = user && ((user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) || user.phoneNumber === ADMIN_PHONE);
+      if (isAdmin) loadAllCodes();
+    } catch (e) {
+      console.error(e);
+      resultBox.innerHTML = `<div class="result error">Error: ${e.message}</div>`;
+    }
+  });
+
+  // ADMIN: add code
+  addCodeBtn.addEventListener('click', async () => {
+    const id = newId.value.trim();
+    const pass = newPass.value.trim();
+    if (!id || !pass) { adminMsg.textContent = 'Enter ID & Pass'; return; }
+    adminMsg.textContent = 'Adding...';
+    try {
+      await set(ref(db, `codes/${id}`), { pass: pass, claimed: false });
+      adminMsg.textContent = `Added ${id}`;
+      newId.value = ''; newPass.value = '';
+      loadAllCodes();
+    } catch (e) {
+      adminMsg.textContent = 'Add failed: ' + e.message;
+    }
+  });
+
+  // Refresh handler
+  refreshCodesBtn.addEventListener('click', loadAllCodes);
+
+  // Load all codes for admin
+  async function loadAllCodes() {
+    codesTableBody.innerHTML = `<tr><td colspan="6" class="muted">Loading…</td></tr>`;
+    try {
+      const snap = await get(child(ref(db), `codes`));
+      if (!snap.exists()) { codesTableBody.innerHTML = `<tr><td colspan="6" class="muted">No codes found</td></tr>`; return; }
+      const data = snap.val();
+      const rows = Object.keys(data).sort().map(id => {
+        const r = data[id];
+        const claimed = r.claimed ? 'Yes' : 'No';
+        const by = r.claimedBy || '';
+        const at = r.claimedAt ? new Date(r.claimedAt).toLoca
